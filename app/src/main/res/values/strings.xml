@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NsLauncher</string>
+    <string name="home">首页</string>
+    <string name="gallery">相册</string>
+    <string name="all_app">All APP</string>
+    <string name="settings">设置</string>
+    <string name="back_button">Back</string>
+    <string name="standby">待机</string>
+</resources>

@@ -1,0 +1,68 @@
+package com.wujia.nslauncher.ui.view
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.wujia.nslauncher.R
+import com.wujia.toolkit.receiver.HiWifiReceiver
+
+@Preview
+@Composable
+fun WiFISignal() {
+    var wifiLevel by remember { mutableIntStateOf(0) }
+    var wifiConnected by remember { mutableStateOf(false) }
+
+    if (wifiConnected) {
+
+        val wifiIcon = when (wifiLevel) {
+            1 -> R.drawable.icon_wifi_1_bar_24
+            3 -> R.drawable.icon_wifi_2_bar_24
+            else -> R.drawable.icon_wifi_3_bar_24
+        }
+
+        Row {
+            Icon(
+                painter = painterResource(wifiIcon),
+                contentDescription = "WiFi信号",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(22.dp)
+                    .align(Alignment.CenterVertically)
+            )
+        }
+    }
+
+    // 动态wifi信号强度监听
+    DisposableEffect(Unit) {
+        val wifiChangedListener = object : HiWifiReceiver.WifiStateListener {
+            override fun onSignalStrengthChanged(rssi: Int, level: Int) {
+                wifiLevel = level
+            }
+
+            override fun onWifiConnected(connected: Boolean, ssid: String?) {
+                wifiConnected = connected
+            }
+        }
+
+        HiWifiReceiver.register(wifiChangedListener)
+
+        // 组件销毁时注销
+        onDispose {
+            HiWifiReceiver.unregister(wifiChangedListener)
+        }
+    }
+
+}
